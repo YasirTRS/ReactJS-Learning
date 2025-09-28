@@ -38,6 +38,14 @@ export default function ApiTable() {
     }
   };
 
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+  const totalPages = Math.ceil(data.length / pageSize);
+  const paginatedData = data.slice((page - 1) * pageSize, page * pageSize);
+
+  const handlePrev = () => setPage((p) => Math.max(1, p - 1));
+  const handleNext = () => setPage((p) => Math.min(totalPages, p + 1));
+
   if (loading) return <div className="text-blue-400">Loading...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
@@ -54,7 +62,7 @@ export default function ApiTable() {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
+          {paginatedData.map((item) => (
             <tr key={item.id} className="border-b border-gray-700">
               <td className="py-2 px-4">{item.id}</td>
               <td className="py-2 px-4">{item.name}</td>
@@ -75,6 +83,11 @@ export default function ApiTable() {
           ))}
         </tbody>
       </table>
+      <div className="flex justify-center items-center mt-4 gap-2">
+        <button onClick={handlePrev} disabled={page === 1} className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-50">Prev</button>
+        <span>Page {page} of {totalPages}</span>
+        <button onClick={handleNext} disabled={page === totalPages} className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-50">Next</button>
+      </div>
     </div>
   );
 }
