@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import { useTodos } from "../context/TodoContext";
 
 export default function AddTodoContext() {
@@ -7,10 +8,16 @@ export default function AddTodoContext() {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (todoInput.trim()) {
-      addTodo(todoInput);
-      setTodoInput("");
+    if (!todoInput.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Input Required',
+        text: 'Something should be available in input',
+      });
+      return;
     }
+    addTodo(todoInput);
+    setTodoInput("");
   };
 
   return (

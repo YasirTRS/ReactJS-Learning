@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
 import { useDispatch } from "react-redux"
 import { addTodo } from "../features/todo/todoSlice"
 
@@ -7,7 +8,14 @@ export default function AddTodo() {
   const dispatch = useDispatch();
   const submitHandler = (e) => {
   e.preventDefault();
-  // Add is_completed as false when dispatching
+  if (!todoInput.trim()) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Input Required',
+      text: 'Something should be available in input',
+    });
+    return;
+  }
   dispatch(addTodo(todoInput)); // is_completed is set in the slice
   setTodoInput("");
 

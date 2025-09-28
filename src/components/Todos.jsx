@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from "react-redux"
+import Swal from "sweetalert2";
 import { removeTodo, toggleCompleted } from "../features/todo/todoSlice"
 import { useState } from "react";
 
@@ -11,8 +12,21 @@ export default function Todos() {
     const totalPages = Math.ceil(todos.length / pageSize);
     const paginatedTodos = todos.slice((page - 1) * pageSize, page * pageSize);
 
-    const removeHandler = (id) => {
-        dispatch(removeTodo(id));
+    const removeHandler = async (id) => {
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to delete this todo?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+        });
+        if (result.isConfirmed) {
+            dispatch(removeTodo(id));
+            Swal.fire('Deleted!', 'Todo has been deleted.', 'success');
+        }
     }
     const toggleHandler = (id) => {
         dispatch(toggleCompleted(id));

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export default function ApiTable() {
   const [data, setData] = useState([]);
@@ -24,17 +25,30 @@ export default function ApiTable() {
   }, []);
 
   const handleDelete = async (id) => {
-    try {
-      const res = await fetch(`https://api.restful-api.dev/objects/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        setData((prev) => prev.filter((item) => item.id !== id));
-      } else {
-        alert("Failed to delete record.");
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this record?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`https://api.restful-api.dev/objects/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          setData((prev) => prev.filter((item) => item.id !== id));
+          Swal.fire('Deleted!', 'Record has been deleted.', 'success');
+        } else {
+          Swal.fire('Failed!', 'Failed to delete record.', 'error');
+        }
+      } catch (err) {
+        Swal.fire('Error!', 'Error deleting record: ' + err.message, 'error');
       }
-    } catch (err) {
-      alert("Error deleting record: " + err.message);
     }
   };
 

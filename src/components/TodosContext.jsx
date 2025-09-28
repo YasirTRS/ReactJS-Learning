@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
 import { useTodos } from "../context/TodoContext";
 
 export default function TodosContext() {
@@ -36,7 +37,22 @@ export default function TodosContext() {
                 </div>
               <button
                 className="btn bg-red-600 text-white rounded text-xs py-1 px-2 cursor-pointer ml-4"
-                onClick={() => removeTodo(todo.id)}
+                onClick={async () => {
+                  const result = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'Do you really want to delete this todo?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel',
+                  });
+                  if (result.isConfirmed) {
+                    removeTodo(todo.id);
+                    Swal.fire('Deleted!', 'Todo has been deleted.', 'success');
+                  }
+                }}
               >
                 Delete
               </button>
