@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const TodoContext = createContext();
 
@@ -7,7 +7,14 @@ export function useTodos() {
 }
 
 export function TodoProvider({ children }) {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem("todos-context");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("todos-context", JSON.stringify(todos));
+  }, [todos]);
 
   const addTodo = (text) => {
     setTodos([

@@ -1,9 +1,14 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 
+const getInitialTodos = () => {
+    const saved = localStorage.getItem("todos-redux");
+    return saved ? JSON.parse(saved) : [];
+};
+
 const todoSlice = createSlice({
     name: 'todos',
     initialState: {
-        todos: []
+        todos: getInitialTodos()
     },
     reducers: {
         addTodo: (state, action) => {
