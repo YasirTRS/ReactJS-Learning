@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import axios from "axios";
 
-export default function ApiTable() {
+export default function AxiosApiTable() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setLoading(true);
-    fetch("https://api.restful-api.dev/objects")
-      .then((res) => res.json())
-      .then((result) => {
-        setData(result);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+    try {
+      const res = await axios.get("https://api.restful-api.dev/objects");
+      setData(res.data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -37,15 +36,9 @@ export default function ApiTable() {
     });
     if (result.isConfirmed) {
       try {
-        const res = await fetch(`https://api.restful-api.dev/objects/${id}`, {
-          method: "DELETE",
-        });
-        if (res.ok) {
-          setData((prev) => prev.filter((item) => item.id !== id));
-          Swal.fire('Deleted!', 'Record has been deleted.', 'success');
-        } else {
-          Swal.fire('Failed!', 'Failed to delete record.', 'error');
-        }
+        await axios.delete(`https://api.restful-api.dev/objects/${id}`);
+        setData((prev) => prev.filter((item) => item.id !== id));
+        Swal.fire('Deleted!', 'Record has been deleted.', 'success');
       } catch (err) {
         Swal.fire('Error!', 'Error deleting record: ' + err.message, 'error');
       }
@@ -65,7 +58,7 @@ export default function ApiTable() {
 
   return (
     <div className="my-8">
-      <h2 className="text-2xl font-bold mb-4">API Data Table(fetch method)</h2>
+      <h2 className="text-2xl font-bold mb-4">API Data Table (Axios)</h2>
       <table className="min-w-full bg-gray-800 text-white rounded">
         <thead>
           <tr>

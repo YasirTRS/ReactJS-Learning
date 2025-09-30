@@ -5,6 +5,7 @@ import { store } from './app/store'
 import { Provider } from 'react-redux'
 import AppContext from './AppContext.jsx'
 import ApiTableApp from './ApiTableApp.jsx'
+import AxiosApiTable from './components/AxiosApiTable.jsx'
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
@@ -17,5 +18,9 @@ createRoot(document.getElementById('root')).render(
       <hr />
     </div>
     <ApiTableApp />
+    <div className='my-15'>
+      <hr />
+    </div>
+    <AxiosApiTable />
   </Provider>,
 )
