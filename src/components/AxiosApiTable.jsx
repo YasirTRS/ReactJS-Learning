@@ -1,27 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
+import { useApiObjects } from "../hooks/useApiObjects";
 
 export default function AxiosApiTable() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get("https://api.restful-api.dev/objects");
-      setData(res.data);
-      setLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const {
+    data,
+    loading,
+    error,
+    page,
+    totalPages,
+    handlePrev,
+    handleNext,
+    deleteObject,
+    refetch,
+  } = useApiObjects(5);
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -36,22 +28,13 @@ export default function AxiosApiTable() {
     });
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://api.restful-api.dev/objects/${id}`);
-        setData((prev) => prev.filter((item) => item.id !== id));
+        await deleteObject(id);
         Swal.fire('Deleted!', 'Record has been deleted.', 'success');
       } catch (err) {
         Swal.fire('Error!', 'Error deleting record: ' + err.message, 'error');
       }
     }
   };
-
-  const [page, setPage] = useState(1);
-  const pageSize = 5;
-  const totalPages = Math.ceil(data.length / pageSize);
-  const paginatedData = data.slice((page - 1) * pageSize, page * pageSize);
-
-  const handlePrev = () => setPage((p) => Math.max(1, p - 1));
-  const handleNext = () => setPage((p) => Math.min(totalPages, p + 1));
 
   if (loading) return <div className="text-blue-400">Loading...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
@@ -69,7 +52,7 @@ export default function AxiosApiTable() {
           </tr>
         </thead>
         <tbody>
-          {paginatedData.map((item) => (
+          {data.map((item) => (
             <tr key={item.id} className="border-b border-gray-700">
               <td className="py-2 px-4">{item.id}</td>
               <td className="py-2 px-4">{item.name}</td>
